@@ -1,25 +1,25 @@
-module.exports = function toReadable (number) {
+module.exports = function toReadable (number){
+//in fact, this general check would also do something for negative numbers
+if (number == 0) {return 'zero'} else {
 //making array of the digits in the way we used to read them
 let resultArray = [];
-let preResult = (number) => {
-  while (number > 1) {
-   resultArray.push(number%100)
-   number = Math.floor(number / 100)
-   resultArray.push(number%10)
-   number = Math.floor(number / 10)
-   return preResult(number)
+let preResult = (cc) => {
+  while (cc >= 1) {
+   resultArray.push(cc%100);
+   cc = Math.floor(cc / 100);
+   resultArray.push(cc%10);
+   cc = Math.floor(cc / 10);
+   return preResult(cc);
   }
  return resultArray;
  }
-resultArray = preResult(number);
-console.log(resultArray);
-   
+preResult(number);  
 
 let toEngRead = (resultArray) => {
   // converting into readable numbers
    let units =  ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine' , 'ten']
    let teens = ['','eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen']
-   let tens = ['','','twenty', 'thirty', 'fourty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
+   let tens = ['','','twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety']
       
    for (let i = 0; i < resultArray.length; i++) {
          switch (true) {
@@ -30,10 +30,13 @@ let toEngRead = (resultArray) => {
                resultArray[i] = units[resultArray[i]]; 
            break;
          case resultArray[i] > 10 && resultArray[i] <= 19:
-               resultArray[i] = tens[Math.floor(resultArray[i]/10%10)]; 
+               resultArray[i] = teens[resultArray[i]%10]; 
            break;
-         case resultArray[i] > 20:
-               resultArray[i] = tens[Math.floor(resultArray[i]/10)] + ' ' + units[Math.floor(resultArray[i]%10)]; 
+         case resultArray[i] >= 20 && resultArray[i]%10 != 0:
+               resultArray[i] = tens[Math.floor(resultArray[i]/10)] + ' ' + units[resultArray[i]%10]; 
+           break;
+        case resultArray[i] >= 20 && resultArray[i]%10 == 0:
+               resultArray[i] = tens[Math.floor(resultArray[i]/10)]; 
            break;
             default:
            console.log('Error!');	
@@ -41,30 +44,31 @@ let toEngRead = (resultArray) => {
            }
      
 }
-
+// and this can be expanded to Russian human readable numbers = another function will deal with the same array
 toEngRead(resultArray);
-console.log(resultArray);
+
 //adding placeholders
+//let toPlacehold = (resultArray) => {
+//   for (let i=1; i < (resultArray.length - 1); i++) {
+//     if ( (i+1)%2 == 0) {resultArray[i] = resultArray[i] + ' hundred';}
+//  }
+//need to fix it with nbsp for numbers over 1k and more
+//for (let ii=0; i< resultArray.length;i2++) {
+//      let placeholder = ['thousand', 'million', 'billion'];
+//      counter = 0;
+//     if ( ii>0 && ii%2 == 0) { resultArray[ii] = resultArray[ii] + placeholder[counter];
+//     counter++;
+//     }
+//}
+//}
+//toPlacehold(resultArray);
 
-for (let i=0; i< resultArray.length;i++) {
-       if ( (i+1)%2 == 0) {resultArray[i] = resultArray[i] + ' hundred';}
-  }
-  
-console.log(resultArray);
-//need to fix it with nbsp
-for (let i=0; i< resultArray.length;i++) {
-       let placeholder = ['thousand', 'million', 'billion'];
-       counter = 0;
-       if ( i>0 && i%2 == 0) { resultArray[i] = resultArray[i] + placeholder[counter];
-       counter++;
-       }
-  }
-  
 // reversing and converting to string
-console.log(resultArray);
-resultArray = resultArray.reverse();
-resultArray = resultArray.join(' ');
+if (resultArray[1] != '') {resultArray[1] = resultArray[1]+' hundred'};
+let resultString = resultArray.reverse().join(' ');
+let answer = resultString.trim();
 
-console.log(resultArray);
+return answer;
    
+ }
 }
